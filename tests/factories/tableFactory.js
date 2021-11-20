@@ -4,9 +4,7 @@ const del = 'DELETE FROM';
 
 const clearDatabase = async () => {
   await connection.query(`
-    ${del} sessions;
     ${del} users;
-    ${del} addresses;
   `);
 };
 
