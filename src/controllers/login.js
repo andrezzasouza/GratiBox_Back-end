@@ -43,7 +43,7 @@ async function login(req, res) {
       [user.id, token]
     );
 
-    return res.status(201).send({ token, name: user.name });
+    return res.status(200).send({ token, name: user.name });
   } catch (err) {
     return res.status(500).send({
       message: 'Não foi possível acessar a base de dados. Tente novamente.'

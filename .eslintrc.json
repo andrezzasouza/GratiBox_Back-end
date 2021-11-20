@@ -29,7 +29,8 @@
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": "off",
     "import/prefer-default-export": "off",
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "no-undef": "off"
   },
   "plugins": [
     "prettier",

@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import app from '../src/app.js';
 import connection from '../src/database/database.js';
 import clearDatabase from './factories/tableFactory.js';
-import { user, createUser } from './factories/userFactory.js';
+import { user, createUser, noPass } from './factories/userFactory.js';
 
 beforeEach(async () => {
   await clearDatabase();
@@ -20,12 +20,7 @@ describe('POST /sign-up', () => {
   });
 
   it('returns 400 for incorrect body', async () => {
-    const result = await supertest(app).post('/sign-up').send({
-      name: user.name,
-      email: user.email,
-      password: '',
-      repeatPassword: ''
-    });
+    const result = await supertest(app).post('/sign-up').send(noPass);
 
     expect(result.body).toEqual({
       message: expect.any(String)
