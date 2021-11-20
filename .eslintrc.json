@@ -28,8 +28,8 @@
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": "off",
-    "import/prefer-default-export": "off"
-
+    "import/prefer-default-export": "off",
+    "no-unused-vars": "off"
   },
   "plugins": [
     "prettier",
