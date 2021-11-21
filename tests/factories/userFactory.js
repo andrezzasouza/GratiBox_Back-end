@@ -29,6 +29,7 @@ const wrongPass = {
 const noPass = {
   email: user.email
 };
+
 const createUser = async (name, email, password) => {
   const hash = bcrypt.hashSync(password, 10);
   await connection.query(
