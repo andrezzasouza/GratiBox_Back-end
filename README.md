@@ -2,7 +2,7 @@
 
 Gratibox é um aplicativo focado em bem estar.
 
-<img src='./src/assets/images/image05.webp' alt='Menina meditando'>
+<img src='https://github.com/andrezzasouza/GratiBox_Front-end/raw/main/src/assets/images/image05.webp' alt='Menina meditando'>
 
 ## Problema
 
