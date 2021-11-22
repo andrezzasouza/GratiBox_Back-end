@@ -86,7 +86,7 @@ Esse projeto é composto por duas partes:
 
 <b>a. Pegar link para 'Clone' nesta página e copiando:</b>
 
-<img src='./src/assets/images/clone.jpg' alt='Foto de onde dar o git clone'>
+<img src='![image](https://user-images.githubusercontent.com/72293497/142931037-f5c6b629-498a-4348-936e-1fa1c86bb984.png)' alt='Foto de onde dar o git clone'>
 <br>
 <br>
 <b>b. Clonar no terminal:</b>
