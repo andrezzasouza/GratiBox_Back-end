@@ -8,7 +8,7 @@ async function checkToken(req, res, next) {
   const tokenNotFound =
     'Você não está logado ou seu token expirou. Por favor, faça seu login e tente novamente.';
   const { authorization } = req.headers;
-  const token = authorization.split('Bearer ')[1];
+  const token = authorization?.split('Bearer ')[1];
 
   if (!token) {
     return res.status(401).send({ message: notLoggedIn });
