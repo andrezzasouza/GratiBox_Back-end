@@ -16,4 +16,11 @@ const loginSchema = Joi.object()
     password: Joi.string().min(6).required()
   });
 
-export { signUpSchema, loginSchema };
+const tokenSchema = Joi.string()
+  .length(36)
+  .guid({
+    version: ['uuidv4']
+  })
+  .required();
+
+export { signUpSchema, loginSchema, tokenSchema };

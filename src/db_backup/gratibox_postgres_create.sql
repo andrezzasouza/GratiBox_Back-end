@@ -12,7 +12,7 @@ CREATE TABLE "addresses" (
 	"id" serial NOT NULL,
 	"state_id" integer NOT NULL,
 	"city" varchar(255) NOT NULL,
-	"cep" varchar(9) NOT NULL,
+	"cep" varchar(8) NOT NULL,
 	"street" varchar(255) NOT NULL,
 	"addressee" varchar(255) NOT NULL,
 	CONSTRAINT "addresses_pk" PRIMARY KEY ("id")
@@ -21,7 +21,7 @@ CREATE TABLE "addresses" (
 );
 CREATE TABLE "states" (
 	"id" serial NOT NULL,
-	"name" varchar(100) NOT NULL UNIQUE,
+	"name" varchar(2) NOT NULL UNIQUE,
 	CONSTRAINT "states_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -29,7 +29,7 @@ CREATE TABLE "states" (
 CREATE TABLE "plans" (
 	"id" serial NOT NULL,
 	"delivery_day_id" integer NOT NULL,
-	"subscription_date" DATE NOT NULL DEFAULT 'NOW()',
+	"subscription_date" DATE NOT NULL DEFAULT NOW(),
 	"address_id" integer NOT NULL,
 	"cancel_date" DATE,
 	CONSTRAINT "plans_pk" PRIMARY KEY ("id")
