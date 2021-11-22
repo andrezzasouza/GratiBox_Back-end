@@ -2,7 +2,7 @@ import connection from '../database/database.js';
 import { tokenSchema } from '../validation/enterValidations.js';
 import { dataSchema } from '../validation/dataValidations.js';
 
-async function placeOrder(req, res, next) {
+async function placeOrder(req, res) {
   const serverError =
     'Não foi possível acessar a base de dados. Por favor, atualize e tente novamente.';
   const noState =

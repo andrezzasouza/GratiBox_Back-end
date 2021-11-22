@@ -54,7 +54,8 @@ describe('POST /login', () => {
     const result = await supertest(app).post('/login').send(goodLogin);
     expect(result.body).toEqual({
       token: expect.any(String),
-      name: user.name
+      name: user.name,
+      plan: null
     });
     expect(result.status).toEqual(200);
   });
