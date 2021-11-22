@@ -5,15 +5,14 @@ import { dataSchema } from '../validation/dataValidations.js';
 async function placeOrder(req, res) {
   const notLoggedIn =
     'Você não está logado. Por favor, faça seu login e tente novamente.';
-  const invalidData =
-    'Algo deu errado com seu pedido. Por favor, atualize e tente novamente.';
   const serverError =
     'Não foi possível acessar a base de dados. Por favor, atualize e tente novamente.';
   const tokenNotFound =
     'Sua sessão expirou ou você não está logado. Por favor, atualize a página e tente novamente.';
   const noState =
     'O estado ou distrito enviado não existe. Por favor, escolha um estado ou distrito válido e tente novamente.';
-
+  const alreadySubscribing =
+    'Você já assinou um plano. Volte para a página de detalhes para saber mais sobre ele!';
   const { authorization } = req.headers;
   const token = authorization?.replace('Bearer ', '');
 
@@ -21,7 +20,6 @@ async function placeOrder(req, res) {
 
   const isCorrectToken = tokenSchema.validate(token);
   const isCorrectData = dataSchema.validate(req.body);
-  // verify if state exists?
 
   if (isCorrectToken.error) {
     return res
@@ -59,6 +57,19 @@ async function placeOrder(req, res) {
       return res.status(403).send({ message: tokenNotFound });
     }
 
+    const userId = checkToken.rows[0].user_id;
+
+    const checkPlans = await connection.query(
+      `
+        SELECT plan_id FROM users WHERE id = $1;
+      `,
+      [userId]
+    );
+
+    if (checkPlans.rowCount !== 0) {
+      return res.status(409).send({ message: alreadySubscribing });
+    }
+
     const findStateId = await connection.query(
       `
         SELECT id FROM states WHERE name = $1;
@@ -78,8 +89,6 @@ async function placeOrder(req, res) {
       `,
       [stateId, city, formattedCep, street, name]
     );
-
-    console.log(addAddress);
 
     const addressId = addAddress.rows[0].id;
 
@@ -101,59 +110,57 @@ async function placeOrder(req, res) {
 
     const planId = createPlan.rows[0].id;
 
-    const getProductsId = await connection.query(`SELECT * FROM products;`);
-
-    const allProductsId = getProductsId.rows;
-    console.log(allProductsId);
-
-    // [
-    //   { id: 1, name: 'Chá' },
-    //   { id: 2, name: 'Incenso' },
-    //   { id: 3, name: 'Produtos orgânicos' }
-    // ];
+    const teaValue = 'Chás';
+    const incenseValue = 'Incensos';
+    const organicValue = 'Produtos orgânicos';
 
     if (tea) {
-      // what should I do?
-      console.log(tea);
+      const getProductsId = await connection.query(
+        `
+        SELECT * FROM products WHERE name = $1;
+        `,
+        [teaValue]
+      );
+
+      await connection.query(
+        `
+          INSERT INTO plans_products (products_id, plan_id) VALUES ($1, $2);
+        `,
+        [getProductsId.rows[0].id, planId]
+      );
     }
 
-    const addProducts = await connection.query(
-      `
-        INSERT INTO plans_products (products_id, plan_id ) VALUES ($1, $2);
-      `,
-      [productId, planId]
-    );
+    if (incense) {
+      const getProductsId = await connection.query(
+        `
+        SELECT * FROM products WHERE name = $1;
+        `,
+        [incenseValue]
+      );
 
-    // ADDRESSES
-    // id | state_id | city | cep | street | addressee;
+      await connection.query(
+        `
+        INSERT INTO plans_products (products_id, plan_id) VALUES ($1, $2);
+        `,
+        [getProductsId.rows[0].id, planId]
+      );
+    }
 
-    // DELIVERY_DAYS
-    //  id |   day
-    // ----+---------
-    //   1 | Segunda
-    //   3 | Quarta
-    //   4 | Sexta
-    //   5 | Dia 01
-    //   6 | Dia 10
+    if (organic) {
+      const getProductsId = await connection.query(
+        `
+        SELECT * FROM products WHERE name = $1;
+        `,
+        [organicValue]
+      );
 
-    // PRODUCTS
-    //  id |        name
-    // ----+--------------------
-    //   1 | Chá
-    //   2 | Incenso
-    //   3 | Produtos orgânicos
-
-    // PLANS_PRODUCTS
-    //  id | products_id | plan_id
-    // ----+-------------+---------
-    //   (0 rows)
-
-    // PLANS
-    //  id | delivery_day_id | subscription_date | address_id | cancel_date
-    // ----+-----------------+-------------------+------------+-------------
-    // (0 rows)
-
-    const userId = checkToken.rows[0].user_id;
+      await connection.query(
+        `
+        INSERT INTO plans_products (products_id, plan_id) VALUES ($1, $2);
+        `,
+        [getProductsId.rows[0].id, planId]
+      );
+    }
 
     await connection.query(
       `
@@ -161,25 +168,10 @@ async function placeOrder(req, res) {
       `,
       [planId, userId]
     );
+    return res.sendStatus(201);
   } catch (err) {
     return res.status(500).send({ message: serverError });
   }
-
-  return res.sendStatus(201);
 }
 
 export default placeOrder;
-
-// body: {
-//     type: 'Semanal',
-//     day: 'Quarta',
-//     tea: false,
-//     incense: true,
-//     organic: false,
-//     name: 'Andrezza Souza',
-//     street: 'Rua A, 123',
-//     formattedCep: '12345678',
-//     city: 'Rio',
-//     state: 'AC'
-//   },
-// }

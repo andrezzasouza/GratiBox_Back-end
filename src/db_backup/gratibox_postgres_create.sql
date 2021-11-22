@@ -29,7 +29,7 @@ CREATE TABLE "states" (
 CREATE TABLE "plans" (
 	"id" serial NOT NULL,
 	"delivery_day_id" integer NOT NULL,
-	"subscription_date" DATE NOT NULL DEFAULT 'NOW()',
+	"subscription_date" DATE NOT NULL DEFAULT NOW(),
 	"address_id" integer NOT NULL,
 	"cancel_date" DATE,
 	CONSTRAINT "plans_pk" PRIMARY KEY ("id")
