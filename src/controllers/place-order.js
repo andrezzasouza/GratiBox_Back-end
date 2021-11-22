@@ -2,21 +2,15 @@ import connection from '../database/database.js';
 import { tokenSchema } from '../validation/enterValidations.js';
 import { dataSchema } from '../validation/dataValidations.js';
 
-async function placeOrder(req, res) {
-  const notLoggedIn =
-    'Você não está logado. Por favor, faça seu login e tente novamente.';
+async function placeOrder(req, res, next) {
   const serverError =
     'Não foi possível acessar a base de dados. Por favor, atualize e tente novamente.';
-  const tokenNotFound =
-    'Sua sessão expirou ou você não está logado. Por favor, atualize a página e tente novamente.';
   const noState =
     'O estado ou distrito enviado não existe. Por favor, escolha um estado ou distrito válido e tente novamente.';
   const alreadySubscribing =
-    'Você já assinou um plano. Volte para a página de detalhes para saber mais sobre ele!';
-  const { authorization } = req.headers;
-  const token = authorization?.replace('Bearer ', '');
+    'Você já assinou um plano. Estamos te redirecionando pra página de login!';
 
-  if (!token) return res.status(401).send({ message: notLoggedIn });
+  const token = req.headers.authorization?.replace('Bearer ', '');
 
   const isCorrectToken = tokenSchema.validate(token);
   const isCorrectData = dataSchema.validate(req.body);
@@ -53,10 +47,6 @@ async function placeOrder(req, res) {
       [token]
     );
 
-    if (checkToken.rowCount === 0) {
-      return res.status(403).send({ message: tokenNotFound });
-    }
-
     const userId = checkToken.rows[0].user_id;
 
     const checkPlans = await connection.query(
@@ -66,7 +56,7 @@ async function placeOrder(req, res) {
       [userId]
     );
 
-    if (checkPlans.rowCount !== 0) {
+    if (checkPlans.rows[0].plan_id) {
       return res.status(409).send({ message: alreadySubscribing });
     }
 
